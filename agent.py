@@ -24,11 +24,6 @@ from livekit.agents.llm import function_tool
 from livekit.agents.voice import MetricsCollectedEvent
 from livekit.plugins import deepgram, openai, silero
 
-
-#from livekit.agents.tts import openai
-#from livekit.agents.stt import deepgram
-#from livekit.agents.vad import silero
-
 logger = logging.getLogger("classroom-agent")
 
 load_dotenv()
