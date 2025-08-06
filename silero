@@ -1,0 +1,38 @@
+import torch
+import numpy as np
+import torchaudio
+from io import BytesIO
+
+class VAD:
+    def __init__(self):
+        # Load Silero VAD model
+        self.model, self.utils = torch.hub.load(
+            repo_or_dir='snakers4/silero-vad',
+            model='silero_vad',
+            force_reload=False,
+            onnx=False
+        )
+        self.get_speech_ts = self.utils['get_speech_ts']
+        self.VAD_SAMPLE_RATE = 16000
+
+    def is_speech(self, audio_bytes: bytes) -> bool:
+        try:
+            # Read audio from byte stream
+            audio_tensor, sample_rate = torchaudio.load(BytesIO(audio_bytes))
+
+            # Resample if needed
+            if sample_rate != self.VAD_SAMPLE_RATE:
+                resampler = torchaudio.transforms.Resample(orig_freq=sample_rate, new_freq=self.VAD_SAMPLE_RATE)
+                audio_tensor = resampler(audio_tensor)
+
+            # Convert to mono if stereo
+            if audio_tensor.shape[0] > 1:
+                audio_tensor = audio_tensor.mean(dim=0, keepdim=True)
+
+            # Run VAD
+            speech_timestamps = self.get_speech_ts(audio_tensor.squeeze(), self.model, sampling_rate=self.VAD_SAMPLE_RATE)
+            return len(speech_timestamps) > 0
+
+        except Exception as e:
+            print(f"[VAD ERROR] {e}")
+            return False
