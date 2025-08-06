@@ -1,2 +1,5 @@
 livekit-agents
 python-dotenv
+torch
+torchaudio
+
