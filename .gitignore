@@ -1,0 +1,12 @@
+# Virtual environment
+.venv/
+venv/
+.env
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# But DON'T ignore these:
+# pyproject.toml  <- Keep this
+# uv.lock         <- Keep this
